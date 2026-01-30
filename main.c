@@ -3,6 +3,7 @@
 #include "x86.h"
 
 extern char end[]; // first address after kernel loaded from ELF file
+extern int ncpu;   // number of CPUs detected
 
 void
 halt(void)
@@ -25,6 +26,7 @@ main(void)
   picinit();       // disable pic
   ioapicinit();    // another interrupt controller
   uartinit();      // serial port
+  cprintf("Number of CPUs: %d\n", ncpu);
   cprintf("Finished setting up PICs!\n\0");
   halt();
 }
