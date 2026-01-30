@@ -15,9 +15,13 @@ main(void)
   picinit();       // disable pic
   ioapicinit();    // another interrupt controller
   uartinit();      // serial port
+  cprintf("xv6 OS booting...\n");
+  cprintf("Enabling interrupts NOW!\n");
   tvinit();        // trap vectors
   idtinit();       // load idt register
   sti();
+  //for(int i = 0;i < 5;i++)
+  //  wfi();
   for(;;)
     wfi();
 }

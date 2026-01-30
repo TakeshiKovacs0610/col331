@@ -64,7 +64,8 @@ lapicinit(void)
   // TICR would be calibrated using an external time source.
   lapicw(TDCR, X1);
   lapicw(TIMER, PERIODIC | (T_IRQ0 + IRQ_TIMER));
-  lapicw(TICR, 10000000);
+  //lapicw(TICR, 10000000);  // initial counting frequency is 10MHz which is 10 million cycles per second after which timer interrupt is generated
+  lapicw(TICR, 1000000000);  // initial counting frequency is 100MHz which is 100 million cycles per second after which timer interrupt is generated
 
   // Disable logical interrupt lines.
   lapicw(LINT0, MASKED);

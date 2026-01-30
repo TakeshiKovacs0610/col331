@@ -33,7 +33,19 @@ trap(struct trapframe *tf)
   switch(tf->trapno){
   case T_IRQ0 + IRQ_TIMER:
     ticks++;
-    cprintf("Tick! %d\n\0", ticks);
+
+    cprintf("Tick %d: eip=%x eax=%x\n",ticks,tf->eip,tf->eax);
+
+    if(ticks%2 == 0){ // For every 10 ticks, print a message
+      cprintf("Tick! %d\n\0", ticks); 
+      cprintf("Hi there! This is a timer interrupt.\n\0");
+      cprintf("You are looking at tick number :%d\n\0", ticks);
+    }
+
+    if(ticks >=15){
+      cprintf("Its time to shutdown now.");
+      outw(0x604, 0x2000); // Power off the machine
+    }
     lapiceoi();
     break;
   case T_IRQ0 + 7:
