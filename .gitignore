@@ -15,3 +15,15 @@ kernelmemfs
 mkfs
 .gdbinit
 .vscode
+.DS_Store
+# <!-- ---
+# applyTo: '**'
+# ---
+# Provide project context and coding guidelines that AI should follow when generating code, answering questions, or reviewing changes.
+
+# 1. Keep explanations short and crisp. 
+# 2. If unsure about specific project details, ask for clarification instead of making assumptions.
+# 3. If not sure about something I have asked you to do, stop and tell me.
+# 4. If I ask for explanations provide brief but clear explanations. 
+# 5. I am not familiar with c so I will need explanations of even the basic syntax.
+# 6. In some prompts I will write out my thought process. Read it and correct me if I am wrong. I could be partially correct, in that case tell me where I am right and were I am wrong. -->
