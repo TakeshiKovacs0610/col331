@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     git \
     vim \
     libgomp1 \
+    expect \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory
