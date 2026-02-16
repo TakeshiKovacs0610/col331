@@ -35,7 +35,7 @@ uartinit(void)
   // enable interrupts.
   inb(COM1+2);
   inb(COM1+0);
-  ioapicenable(IRQ_COM1, 0);
+  ioapicenable(IRQ_COM1, 0); // tells IOAPIC to unmask IRQ4 and route it to CPU 0.
 
   // Announce that we're here.
   for(p="xv6...\n"; *p; p++)
@@ -63,7 +63,7 @@ uartgetc(void)
     return -1;
   return inb(COM1+0);
 }
-
+// console intrupt handler gets access to uartgetc
 void
 uartintr(void)
 {

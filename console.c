@@ -11,6 +11,11 @@
 static void consputc(int);
 static int panicked = 0;
 
+
+// Converts an integer to text and prints it one character at a time. () 
+// If signed and negative, it flips sign and remembers to print minus.
+// Repeatedly takes remainder by base (10 or 16) to collect digits in reverse.
+// Then emits digits backward through consputc so output appears in correct order.
 static void
 printint(int xx, int base, int sign)
 {
@@ -37,6 +42,11 @@ printint(int xx, int base, int sign)
 }
 
 // Print to the console. only understands %d, %x, %p, %s.
+// Minimal formatted printer for kernel messages.
+// Walks format string character by character.
+// Normal chars go directly to consputc.
+// Handles only percent d, percent x/percent p, percent s, and percent percent.
+// Uses printint for numbers and raw loop for strings.
 void
 cprintf(char *fmt, ...)
 {
@@ -83,6 +93,11 @@ cprintf(char *fmt, ...)
   }
 }
 
+
+// halt(): Powers off QEMU and never returns.
+// Prints farewell message.
+// Writes shutdown value to QEMU power ports 0x602 and 0xB002.
+// Spins forever afterward.
 void
 halt(void)
 {
@@ -93,6 +108,12 @@ halt(void)
   for(;;);
 }
 
+
+// panic(s): Fatal error handler.
+// Disables interrupts with cli.
+// Prints panic header and message.
+// Captures and prints a small call stack via getcallerpcs.
+// Sets panicked flag and calls halt.
 void
 panic(char *s)
 {
@@ -112,6 +133,10 @@ panic(char *s)
 
 #define BACKSPACE 0x100
 
+
+// Lowest-level console character output helper.
+// For BACKSPACE, sends backspace-space-backspace to visually erase one char.
+// Otherwise forwards character to uartputc (serial output).
 void
 consputc(int c)
 {
@@ -131,6 +156,12 @@ struct {
 
 #define C(x)  ((x)-'@')  // Control-x
 
+// consoleintr(getc): Core input interrupt consumer.
+// Repeatedly calls getc until no more chars (negative return).
+// Ctrl+U: deletes current edited line back to newline or write boundary.
+// Backspace or DEL: deletes one edited char if possible.
+// Normal char: normalizes carriage return to newline, stores in circular buffer, echoes to output.
+// Marks input as committed (moves w to e) on newline, Ctrl+D, or full buffer.
 void
 consoleintr(int (*getc)(void))
 {
