@@ -11,23 +11,23 @@
 #include "buf.h"
 
 #define SECTOR_SIZE   512
-#define IDE_BSY       0x80
-#define IDE_DRDY      0x40
-#define IDE_DF        0x20
-#define IDE_ERR       0x01
+#define IDE_BSY       0x80    // Disk is busy
+#define IDE_DRDY      0x40    // Disk is ready
+#define IDE_DF        0x20    // Drive fault
+#define IDE_ERR       0x01    // Error occurred
 
-#define IDE_CMD_READ  0x20
-#define IDE_CMD_WRITE 0x30
-#define IDE_CMD_RDMUL 0xc4
-#define IDE_CMD_WRMUL 0xc5
+#define IDE_CMD_READ  0x20    // Read sectors (PIO)
+#define IDE_CMD_WRITE 0x30    // Write sectors (PIO)
+#define IDE_CMD_RDMUL 0xc4    // Read multiple sectors
+#define IDE_CMD_WRMUL 0xc5    // Write multiple sectors
 
 // idequeue points to the buf now being read/written to the disk.
 // idequeue->qnext points to the next buf to be processed.
 // You must hold idelock while manipulating queue.
 
-static struct buf *idequeue;
+static struct buf *idequeue; // Queue of pending disk requests
 
-static int havedisk1;
+static int havedisk1; // Is a second disk (disk 1) present?
 static void idestart(struct buf*);
 
 // Wait for IDE disk to become ready.
@@ -53,7 +53,7 @@ ideinit(void)
 
   // Check if disk 1 is present
   outb(0x1f6, 0xe0 | (1<<4));
-  for(i=0; i<1000; i++){
+  for(i=0; i<1000; i++){ // Poll 1000 times to see if disk 1 is ready. because disks are slow to respond.
     if(inb(0x1f7) != 0){
       havedisk1 = 1;
       break;
@@ -88,7 +88,7 @@ idestart(struct buf *b)
   outb(0x1f6, 0xe0 | ((b->dev&1)<<4) | ((sector>>24)&0x0f));
   if(b->flags & B_DIRTY){
     outb(0x1f7, write_cmd);
-    outsl(0x1f0, b->data, BSIZE/4);
+    outsl(0x1f0, b->data, BSIZE/4);// why BSIZE/4? because outsl writes 4 bytes (32 bits) each time, so we need to divide the block size by 4 to get the number of times we need to call outsl. outsl has l which means it writes a long (4 bytes). If it was 
   } else {
     outb(0x1f7, read_cmd);
   }
